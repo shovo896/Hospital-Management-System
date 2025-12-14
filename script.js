@@ -1,6 +1,13 @@
+let isAdminLoggedIn = false;
+
+// Default admin credentials (can be changed)
+const adminCredentials = {
+    username: 'admin',
+    password: 'admin123'
+};
+
 
 // DATA STORAGE & INITIALIZATION
-
 
 let hospitalData = {
     patients: [],
@@ -108,7 +115,22 @@ function initializeSampleData() {
 // UI NAVIGATION
 
 
+function showAdminLogin() {
+    if (isAdminLoggedIn) {
+        showSection('admin');
+    } else {
+        document.getElementById('admin-login-modal').classList.add('active');
+    }
+}
+
 function showSection(sectionId) {
+    // Check if trying to access admin without login
+    if (sectionId === 'admin' && !isAdminLoggedIn) {
+        showToast('Please login as admin first!');
+        showAdminLogin();
+        return;
+    }
+
     // Hide all sections
     document.querySelectorAll('.section').forEach(section => {
         section.classList.remove('active');
@@ -129,6 +151,13 @@ function showSection(sectionId) {
 }
 
 function showAdminTab(tabId) {
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Please login as admin.');
+        showAdminLogin();
+        return;
+    }
+
     // Hide all tabs
     document.querySelectorAll('.admin-tab').forEach(tab => {
         tab.classList.remove('active');
@@ -155,8 +184,54 @@ function showAdminTab(tabId) {
     }
 }
 
-
+//
 // PATIENT REGISTRATION
+
+
+// Admin Login Form Handler
+document.getElementById('admin-login-form')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('admin-username').value;
+    const password = document.getElementById('admin-password').value;
+
+    if (username === adminCredentials.username && password === adminCredentials.password) {
+        isAdminLoggedIn = true;
+        closeModal('admin-login-modal');
+        showToast('Login successful! Welcome Admin');
+        showSection('admin');
+        
+        // Update nav button
+        updateAdminButton();
+        
+        // Reset form
+        this.reset();
+        document.getElementById('login-error').style.display = 'none';
+    } else {
+        document.getElementById('login-error').textContent = '❌ Invalid username or password!';
+        document.getElementById('login-error').style.display = 'block';
+    }
+});
+
+function updateAdminButton() {
+    const adminBtn = document.querySelector('.admin-btn');
+    if (isAdminLoggedIn) {
+        adminBtn.textContent = 'Admin Panel';
+        adminBtn.style.background = '#10b981';
+    } else {
+        adminBtn.textContent = 'Admin Login';
+        adminBtn.style.background = '#ef4444';
+    }
+}
+
+function logoutAdmin() {
+    if (confirm('Are you sure you want to logout?')) {
+        isAdminLoggedIn = false;
+        showToast('Logged out successfully');
+        updateAdminButton();
+        showSection('patient-home');
+    }
+}
 
 document.getElementById('registration-form')?.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -223,6 +298,8 @@ function loadDoctorsGrid() {
     });
 }
 
+
+// APPOINTMENT BOOKING
 
 
 let selectedDoctor = null;
@@ -292,9 +369,8 @@ document.getElementById('appointment-form')?.addEventListener('submit', function
     this.reset();
 });
 
-
 // DIAGNOSTIC SERVICES
-
+// 
 
 let selectedDiagnostic = null;
 
@@ -357,7 +433,9 @@ document.getElementById('diagnostic-form')?.addEventListener('submit', function(
     showToast(`Diagnostic test booked successfully! Token: ${booking.tokenNumber}`);
     closeModal('diagnostic-modal');
     this.reset();
-})
+});
+
+
 // WARD ADMISSION
 
 
@@ -460,7 +538,6 @@ function loadAdmissionRequests() {
     });
 }
 
-
 // QUEUE MANAGEMENT
 
 
@@ -527,6 +604,12 @@ function startWaitingTimer(queueItem) {
 }
 
 function startService(providerId, queueType) {
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Admin access only.');
+        return;
+    }
+
     let queue;
     if (queueType === 'doctor') {
         queue = hospitalData.queues.doctors[providerId];
@@ -589,6 +672,12 @@ function startService(providerId, queueType) {
 }
 
 function endService(providerId, queueType) {
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Admin access only.');
+        return;
+    }
+
     let queue;
     if (queueType === 'doctor') {
         queue = hospitalData.queues.doctors[providerId];
@@ -687,6 +776,12 @@ function cancelAddDoctor() {
 document.getElementById('doctor-form')?.addEventListener('submit', function(e) {
     e.preventDefault();
 
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Admin access only.');
+        return;
+    }
+
     const doctor = {
         id: 'D' + Date.now(),
         name: document.getElementById('doctor-name').value,
@@ -727,6 +822,12 @@ function loadDoctorsListAdmin() {
 }
 
 function deleteDoctor(doctorId) {
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Admin access only.');
+        return;
+    }
+
     if (confirm('Are you sure you want to delete this doctor?')) {
         hospitalData.doctors = hospitalData.doctors.filter(d => d.id !== doctorId);
         delete hospitalData.queues.doctors[doctorId];
@@ -735,6 +836,9 @@ function deleteDoctor(doctorId) {
         showToast('Doctor deleted');
     }
 }
+
+
+// ADMIN - QUEUES DISPLAY
 
 
 function loadDoctorQueues() {
@@ -879,7 +983,6 @@ function updateQueueDisplays() {
 }
 
 
-// ADMIN - WARD MANAGEMENT
 
 function loadWardRequestsAdmin() {
     const container = document.getElementById('ward-requests-admin');
@@ -917,6 +1020,12 @@ function loadWardRequestsAdmin() {
 }
 
 function approveAdmission(admissionId) {
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Admin access only.');
+        return;
+    }
+
     const admission = hospitalData.wardAdmissions.find(adm => adm.id === admissionId);
     
     // SCENARIO S6: ICU full check
@@ -945,6 +1054,12 @@ function approveAdmission(admissionId) {
 }
 
 function rejectAdmission(admissionId) {
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Admin access only.');
+        return;
+    }
+
     const admission = hospitalData.wardAdmissions.find(adm => adm.id === admissionId);
     
     // SCENARIO S11: Ward rejected
@@ -957,9 +1072,7 @@ function rejectAdmission(admissionId) {
     showToast('Admission rejected');
 }
 
-// ============================================
-// ANALYTICS & ALERTS
-// ============================================
+
 
 function updateAnalytics() {
     // Update stats
@@ -1041,8 +1154,6 @@ function loadAlerts() {
 }
 
 
-// UTILITY FUNCTIONS
-
 
 function generateToken() {
     return 'TKN' + Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -1080,6 +1191,12 @@ function showToast(message) {
 }
 
 function resetDailyData() {
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Admin access only.');
+        return;
+    }
+
     if (confirm('Are you sure you want to reset all daily data? This will clear all queues and appointments.')) {
         // Clear queues
         hospitalData.doctors.forEach(doctor => {
@@ -1108,6 +1225,12 @@ function resetDailyData() {
 }
 
 function exportData() {
+    // Check admin authentication
+    if (!isAdminLoggedIn) {
+        showToast('Unauthorized! Admin access only.');
+        return;
+    }
+
     const dataStr = JSON.stringify(hospitalData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
@@ -1151,7 +1274,7 @@ function initializeTimers() {
     });
 }
 
-
+//
 
 // Load data on page load
 window.addEventListener('DOMContentLoaded', () => {
