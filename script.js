@@ -1246,10 +1246,10 @@ function showPatientAuth() {
         if (confirm(`Logged in as: ${currentPatient.name}\n\nDo you want to logout?`)) {
             logoutPatient();
         }
-    } else {
+     else {
         showSection('patient-register');
     }
-}
+
 
 // Old patient auth functions - deprecated
 function updatePatientAuthButton() {
