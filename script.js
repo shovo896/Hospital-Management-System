@@ -236,6 +236,10 @@ document.getElementById('unified-login-form')?.addEventListener('submit', functi
         currentRole = selectedRoleForAuth;
         saveSession();
         
+        console.log('✅ Login successful!');
+        console.log('User:', currentUser);
+        console.log('Role:', currentRole);
+        
         showToast(`Welcome ${user.name || 'Admin'}!`);
         updateNavigationForRole();
         
@@ -246,6 +250,8 @@ document.getElementById('unified-login-form')?.addEventListener('submit', functi
             'employee': 'employee-dashboard',
             'admin': 'admin'
         };
+        
+        console.log('Redirecting to:', dashboards[selectedRoleForAuth]);
         showSection(dashboards[selectedRoleForAuth]);
         
         this.reset();
@@ -900,47 +906,8 @@ function loadAdminDashboard() {
     updateAnalytics();
 }
 
-function showSection(sectionId) {
-    // Check if trying to access admin without login
-    if (sectionId === 'admin' && !currentUser || currentRole !== 'admin') {
-        showToast('Please login as admin first!');
-        showAdminLogin();
-        return;
-    }
-
-    // Check if trying to access profile without login
-    if (sectionId === 'my-profile' && !currentPatient) {
-        showToast('Please login first to view your profile!');
-        showSection('patient-register');
-        return;
-    }
-
-    // Hide all sections
-    document.querySelectorAll('.section').forEach(section => {
-        section.classList.remove('active');
-    });
-    
-    // Show selected section
-    document.getElementById(sectionId).classList.add('active');
-
-    // Load section-specific data
-    if (sectionId === 'doctors') {
-        loadDoctorsGrid();
-    } else if (sectionId === 'wards') {
-        loadAdmissionRequests();
-    } else if (sectionId === 'blood-bank') {
-        loadBloodStock();
-        loadBloodRequests();
-    } else if (sectionId === 'my-profile') {
-        loadMyProfile();
-    } else if (sectionId === 'admin') {
-        showAdminTab('doctors-mgmt');
-        updateAnalytics();
-    }
-}
-
 // ============================================
-// MY PROFILE SECTION
+// OLD PROFILE FUNCTIONS (DEPRECATED)
 // ============================================
 
 function loadMyProfile() {
@@ -1068,36 +1035,7 @@ function loadMyAdmissions() {
     });
 }
 
-function showSection(sectionId) {
-    // Check if trying to access admin without login
-    if (sectionId === 'admin' && !currentUser || currentRole !== 'admin') {
-        showToast('Please login as admin first!');
-        showAdminLogin();
-        return;
-    }
-
-    // Hide all sections
-    document.querySelectorAll('.section').forEach(section => {
-        section.classList.remove('active');
-    });
-    
-    // Show selected section
-    document.getElementById(sectionId).classList.add('active');
-
-    // Load section-specific data
-    if (sectionId === 'doctors') {
-        loadDoctorsGrid();
-    } else if (sectionId === 'wards') {
-        loadAdmissionRequests();
-    } else if (sectionId === 'blood-bank') {
-        loadBloodStock();
-        loadDonationHistory();
-        loadBloodRequests();
-    } else if (sectionId === 'admin') {
-        showAdminTab('doctors-mgmt');
-        updateAnalytics();
-    }
-}
+// Old showSection removed - using unified version above
 
 function showAdminTab(tabId) {
     // Check admin authentication with new system
@@ -2890,16 +2828,41 @@ function initializeTimers() {
 }
 
 // ============================================
+// BACKWARD COMPATIBILITY FUNCTIONS
+// ============================================
+
+// These are dummy functions for backward compatibility
+function showAdminLogin() {
+    // Redirect to new login system
+    showSection('login');
+}
+
+function loadDoctorsGrid() {
+    // Old function - not needed anymore
+    // Doctors now loaded in patient dashboard
+}
+
+function loadAdmissionRequests() {
+    // Old function - not needed anymore  
+}
+
+// ============================================
 // INITIALIZATION
 // ============================================
 
 // Load data on page load
 window.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Hospital System Loading...');
     loadData();
+    console.log('✅ Data loaded');
     updateNavigationForRole();
+    console.log('✅ Navigation updated');
+    console.log('Current User:', currentUser);
+    console.log('Current Role:', currentRole);
     
     // Show home by default
     showSection('home');
+    console.log('✅ Home section displayed');
 });
 
 // Close modals when clicking outside
