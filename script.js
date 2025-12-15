@@ -1,4 +1,8 @@
+// Hospital Management System - Main JavaScript
 
+// ============================================
+// ADMIN AUTHENTICATION
+// ============================================
 
 let isAdminLoggedIn = false;
 
@@ -375,9 +379,9 @@ function showAdminTab(tabId) {
     }
 }
 
-
+// ============================================
 // ADMIN - BLOOD BANK MANAGEMENT
-// 
+// ============================================
 
 function loadAdminBloodBank() {
     // Load blood stock
@@ -570,9 +574,9 @@ function showAdminTab(tabId) {
     }
 }
 
-
+// ============================================
 // PATIENT REGISTRATION & LOGIN
-
+// ============================================
 
 function showPatientAuth() {
     if (currentPatient) {
@@ -735,9 +739,9 @@ document.getElementById('registration-form')?.addEventListener('submit', functio
     }, 2000);
 });
 
-
+// ============================================
 // DOCTORS SECTION
-
+// ============================================
 
 function loadDoctorsGrid() {
     const grid = document.getElementById('doctors-grid');
@@ -767,9 +771,9 @@ function loadDoctorsGrid() {
     });
 }
 
-// 
+// ============================================
 // APPOINTMENT BOOKING
-
+// ============================================
 
 let selectedDoctor = null;
 
@@ -971,9 +975,9 @@ document.getElementById('appointment-form')?.addEventListener('submit', function
     }, 500);
 });
 
-
+// ============================================
 // DIAGNOSTIC SERVICES
-//
+// ============================================
 
 let selectedDiagnostic = null;
 
@@ -1135,8 +1139,9 @@ document.getElementById('diagnostic-form')?.addEventListener('submit', function(
     }, 500);
 });
 
-
+// ============================================
 // BLOOD BANK SYSTEM
+// ============================================
 
 function loadBloodStock() {
     const container = document.getElementById('blood-stock-display');
@@ -1326,9 +1331,9 @@ function loadBloodRequests() {
     });
 }
 
-
+// ============================================
 // PAYMENT SYSTEM
-
+// ============================================
 
 let currentPaymentData = null;
 
@@ -1417,7 +1422,10 @@ document.getElementById('payment-form')?.addEventListener('submit', function(e) 
         alert(`Payment Receipt\n\nAppointment ID: ${currentPaymentData.tokenNumber}\nDoctor: ${currentPaymentData.doctorName}\nAmount Paid: ৳${currentPaymentData.fee}\nPayment Method: ${method.toUpperCase()}\nDate: ${formatDateTime(payment.paymentDate)}\n\nThank you!\n- IbneSina Hospital`);
     }, 500);
 });
-// ward manegement 
+
+// ============================================
+// WARD ADMISSION
+// ============================================
 
 let selectedWard = null;
 
@@ -1514,9 +1522,9 @@ function loadAdmissionRequests() {
     });
 }
 
-
+// ============================================
 // QUEUE MANAGEMENT
-
+// ============================================
 
 function addToQueue(providerId, booking, queueType) {
     const queueItem = {
@@ -1735,8 +1743,11 @@ function updateAverages() {
         hospitalData.analytics.averageWaitTime = Math.floor(totalWait / completed.length);
         hospitalData.analytics.averageServiceTime = Math.floor(totalService / completed.length);
     }
+}
 
-// ADMIN - DOCTORS MANAGE
+// ============================================
+// ADMIN - DOCTORS MANAGEMENT
+// ============================================
 
 function showAddDoctorForm() {
     document.getElementById('add-doctor-form').style.display = 'block';
@@ -1811,9 +1822,9 @@ function deleteDoctor(doctorId) {
     }
 }
 
-
+// ============================================
 // ADMIN - QUEUES DISPLAY
-
+// ============================================
 
 function loadDoctorQueues() {
     const container = document.getElementById('doctor-queues');
@@ -1956,9 +1967,9 @@ function updateQueueDisplays() {
     });
 }
 
-
+// ============================================
 // ADMIN - WARD MANAGEMENT
-
+// ============================================
 
 function loadWardRequestsAdmin() {
     const container = document.getElementById('ward-requests-admin');
@@ -2048,9 +2059,9 @@ function rejectAdmission(admissionId) {
     showToast('Admission rejected');
 }
 
-
+// ============================================
 // ANALYTICS & ALERTS
-
+// ============================================
 
 function updateAnalytics() {
     // Update stats
@@ -2131,9 +2142,9 @@ function loadAlerts() {
     });
 }
 
-
+// ============================================
 // UTILITY FUNCTIONS
-
+// ============================================
 
 function generateToken() {
     return 'TKN' + Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -2254,9 +2265,9 @@ function initializeTimers() {
     });
 }
 
-
+// ============================================
 // INITIALIZATION
-
+// ============================================
 
 // Load data on page load
 window.addEventListener('DOMContentLoaded', () => {
@@ -2278,4 +2289,3 @@ window.addEventListener('click', (e) => {
         e.target.classList.remove('active');
     }
 });
-
