@@ -1,6 +1,4 @@
-// Hospital Management System - Main JavaScript
 
-// Check if running in browser
 if (typeof document === 'undefined') {
     console.log('⚠️ Not in browser environment');
     // Export for Node.js if needed
