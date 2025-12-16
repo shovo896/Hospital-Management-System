@@ -60,10 +60,7 @@ let hospitalData = {
     alerts: []
 };
 
-// Current logged-in patient
-let currentPatient = null;
-
-// Timer intervals
+// Timer intervals (currentUser declared at top)
 let timerIntervals = {};
 
 // Load data from localStorage
@@ -908,16 +905,16 @@ function loadAdminDashboard() {
 // ============================================
 
 function loadMyProfile() {
-    if (!currentPatient) return;
+    if (!currentUser) return;
 
     // Load profile info
-    document.getElementById('profile-avatar-text').textContent = currentPatient.name.charAt(0).toUpperCase();
-    document.getElementById('profile-name').textContent = currentPatient.name;
-    document.getElementById('profile-id').textContent = `Patient ID: ${currentPatient.id}`;
-    document.getElementById('profile-blood').textContent = `Blood Group: ${currentPatient.bloodGroup || 'Not specified'}`;
-    document.getElementById('profile-phone').textContent = currentPatient.phone;
-    document.getElementById('profile-age').textContent = `${currentPatient.age} years`;
-    document.getElementById('profile-registered').textContent = formatDateTime(currentPatient.registrationDate);
+    document.getElementById('profile-avatar-text').textContent = currentUser.name.charAt(0).toUpperCase();
+    document.getElementById('profile-name').textContent = currentUser.name;
+    document.getElementById('profile-id').textContent = `Patient ID: ${currentUser.id}`;
+    document.getElementById('profile-blood').textContent = `Blood Group: ${currentUser.bloodGroup || 'Not specified'}`;
+    document.getElementById('profile-phone').textContent = currentUser.phone;
+    document.getElementById('profile-age').textContent = `${currentUser.age} years`;
+    document.getElementById('profile-registered').textContent = formatDateTime(currentUser.registrationDate);
 
     // Load my appointments
     loadMyAppointments();
@@ -934,7 +931,7 @@ function loadMyProfile() {
 
 function loadMyAppointments() {
     const container = document.getElementById('my-appointments-list');
-    const myAppointments = hospitalData.appointments.filter(apt => apt.patientId === currentPatient.id);
+    const myAppointments = hospitalData.appointments.filter(apt => apt.patientId === currentUser.id);
 
     if (myAppointments.length === 0) {
         container.innerHTML = '<p style="color: #64748b;">No appointments yet.</p>';
@@ -962,7 +959,7 @@ function loadMyAppointments() {
 
 function loadMyDiagnostics() {
     const container = document.getElementById('my-diagnostics-list');
-    const myDiagnostics = hospitalData.diagnosticBookings.filter(diag => diag.patientId === currentPatient.id);
+    const myDiagnostics = hospitalData.diagnosticBookings.filter(diag => diag.patientId === currentUser.id);
 
     if (myDiagnostics.length === 0) {
         container.innerHTML = '<p style="color: #64748b;">No diagnostic tests booked yet.</p>';
@@ -986,7 +983,7 @@ function loadMyDiagnostics() {
 
 function loadMyDonations() {
     const container = document.getElementById('my-donations-list');
-    const myDonations = hospitalData.bloodBank.donations.filter(don => don.donorId === currentPatient.id);
+    const myDonations = hospitalData.bloodBank.donations.filter(don => don.donorId === currentUser.id);
 
     if (myDonations.length === 0) {
         container.innerHTML = '<p style="color: #64748b;">No blood donations yet. Be a hero - donate blood!</p>';
@@ -1009,7 +1006,7 @@ function loadMyDonations() {
 
 function loadMyAdmissions() {
     const container = document.getElementById('my-admissions-list');
-    const myAdmissions = hospitalData.wardAdmissions.filter(adm => adm.patientId === currentPatient.id);
+    const myAdmissions = hospitalData.wardAdmissions.filter(adm => adm.patientId === currentUser.id);
 
     if (myAdmissions.length === 0) {
         container.innerHTML = '<p style="color: #64748b;">No ward admission requests.</p>';
@@ -1242,14 +1239,6 @@ function showPatientAuth() {
     // Deprecated - redirecting to new login
     showSection('login');
 }
-        // Already logged in - show profile or logout
-        if (confirm(`Logged in as: ${currentPatient.name}\n\nDo you want to logout?`)) {
-            logoutPatient();
-        }
-     else {
-        showSection('patient-register');
-    }
-
 
 // Old patient auth functions - deprecated
 function updatePatientAuthButton() {
@@ -1436,14 +1425,14 @@ function updateAvailableSlots(doctorId, date) {
 }
 
 function openAppointmentModal(doctor) {
-    if (!currentPatient && hospitalData.patients.length === 0) {
+    if (!currentUser && hospitalData.patients.length === 0) {
         showToast('Please register first!');
         showSection('patient-register');
         return;
     }
 
-    if (!currentPatient) {
-        currentPatient = hospitalData.patients[hospitalData.patients.length - 1];
+    if (!currentUser) {
+        currentUser = hospitalData.patients[hospitalData.patients.length - 1];
     }
 
     selectedDoctor = doctor;
@@ -1608,14 +1597,14 @@ function updateDiagnosticSlots(testType, date) {
 }
 
 function bookDiagnostic(testType) {
-    if (!currentPatient && hospitalData.patients.length === 0) {
+    if (!currentUser && hospitalData.patients.length === 0) {
         showToast('Please register first!');
         showSection('patient-register');
         return;
     }
 
-    if (!currentPatient) {
-        currentPatient = hospitalData.patients[hospitalData.patients.length - 1];
+    if (!currentUser) {
+        currentUser = hospitalData.patients[hospitalData.patients.length - 1];
     }
 
     selectedDiagnostic = testType;
@@ -2051,13 +2040,13 @@ document.getElementById('ward-form')?.addEventListener('submit', function(e) {
 function loadAdmissionRequests() {
     const list = document.getElementById('admission-requests-list');
     
-    if (!currentPatient) {
+    if (!currentUser) {
         list.innerHTML = '<p>Please register to view your admission requests.</p>';
         return;
     }
 
     const patientAdmissions = hospitalData.wardAdmissions.filter(
-        adm => adm.patientId === currentPatient.id
+        adm => adm.patientId === currentUser.id
     );
 
     if (patientAdmissions.length === 0) {
@@ -2836,7 +2825,7 @@ function resetSystem() {
         localStorage.removeItem('hospitalData');
         localStorage.removeItem('userData');
         localStorage.removeItem('currentSession');
-        localStorage.removeItem('currentPatient'); // Old system
+        localStorage.removeItem('currentUser'); // Old system
         
         // Reset variables
         currentUser = null;
