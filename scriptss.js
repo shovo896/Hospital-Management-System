@@ -49,9 +49,6 @@ let hospitalData = {
     alerts: []
 };
 
-// ============================================
-// DATA MANAGEMENT
-// ============================================
 
 function saveData() {
     localStorage.setItem('hospitalData', JSON.stringify(hospitalData));
