@@ -1,8 +1,4 @@
-// Hospital Management System - Main JavaScript
-
-// ============================================
-// AUTHENTICATION & USER MANAGEMENT
-// ============================================
+//
 
 let currentUser = null;
 let currentRole = null;
