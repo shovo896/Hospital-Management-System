@@ -1,4 +1,17 @@
-//
+// Hospital Management System - Main JavaScript
+
+// Check if running in browser
+if (typeof document === 'undefined') {
+    console.log('⚠️ Not in browser environment');
+    // Export for Node.js if needed
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = {};
+    }
+}
+
+// ============================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================
 
 let currentUser = null;
 let currentRole = null;
@@ -2877,7 +2890,18 @@ window.addEventListener('DOMContentLoaded', () => {
     // Show home by default
     showSection('home');
     console.log('✅ Home section displayed');
+    
+    // Setup all event listeners
+    setupEventListeners();
+    console.log(' Event listeners initialized');
 });
+
+// Function to setup all event listeners
+function setupEventListeners() {
+    // This function will be called after DOM is ready
+    // All event listeners are already defined above with ?. operator
+    // So they won't throw errors if elements don't exist
+}
 
 // Close modals when clicking outside
 window.addEventListener('click', (e) => {
