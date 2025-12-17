@@ -1,13 +1,9 @@
-// ============================================
-// IbneSina Hospital Management System
-// Brand New Clean JavaScript
-// ============================================
+
 
 console.log('🏥 IbneSina Hospital System Loading...');
 
-// ============================================
 // GLOBAL VARIABLES
-// ============================================
+
 
 let currentUser = null;
 let currentRole = null;
@@ -865,3 +861,29 @@ window.addEventListener('click', (e) => {
 });
 
 console.log('✅ Script loaded!');
+function loadAvailableTimeSlots() {
+    const date = document.getElementById('appointmentDate').value;
+    const slotSelect = document.getElementById('timeSlot');
+
+    console.log('📅 Selected date:', date);
+
+    slotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+
+    if (!date) return;
+
+    // Dummy slots (later doctor wise banানো যাবে)
+    const slots = [
+        '09:00 AM - 09:30 AM',
+        '09:30 AM - 10:00 AM',
+        '10:00 AM - 10:30 AM',
+        '11:00 AM - 11:30 AM',
+        '03:00 PM - 03:30 PM'
+    ];
+
+    slots.forEach(slot => {
+        const option = document.createElement('option');
+        option.value = slot;
+        option.textContent = slot;
+        slotSelect.appendChild(option);
+    });
+}
