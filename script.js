@@ -861,6 +861,7 @@ window.addEventListener('click', (e) => {
 });
 
 console.log('✅ Script loaded!');
+// clean code er practice er jonno in future 864 line theke delete kore dibo
 function loadAvailableTimeSlots() {
     const date = document.getElementById('appointmentDate').value;
     const slotSelect = document.getElementById('timeSlot');
@@ -886,4 +887,38 @@ function loadAvailableTimeSlots() {
         option.textContent = slot;
         slotSelect.appendChild(option);
     });
+}
+// ei porjonto delete korbo 
+
+// newly called 
+function loadAvailableTimeSlots() {
+    const date = document.getElementById('appointment-date').value;
+    const slotSelect = document.getElementById('appointment-slot');
+    const info = document.getElementById('slots-info');
+
+    console.log('📅 Selected date:', date);
+
+    slotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+
+    if (!date) {
+        info.textContent = 'Select a date to see available slots';
+        return;
+    }
+
+    const slots = [
+        '09:00 AM - 09:30 AM',
+        '09:30 AM - 10:00 AM',
+        '10:00 AM - 10:30 AM',
+        '11:00 AM - 11:30 AM',
+        '03:00 PM - 03:30 PM'
+    ];
+
+    slots.forEach(slot => {
+        const opt = document.createElement('option');
+        opt.value = slot;
+        opt.textContent = slot;
+        slotSelect.appendChild(opt);
+    });
+
+    info.textContent = `Available slots for ${date}`;
 }
