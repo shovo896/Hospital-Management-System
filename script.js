@@ -77,16 +77,7 @@ function loadData() {
         } catch (e) {}
     }
     
-    const savedSession = localStorage.getItem('currentSession');
-    if (savedSession) {
-        try {
-            const session = JSON.parse(savedSession);
-            currentUser = session.user;
-            currentRole = session.role;
-        } catch (e) {
-            localStorage.removeItem('currentSession');
-        }
-    }
+    hydrateSessionFromStorage();
 }
 
 function saveUserData() {
@@ -102,8 +93,38 @@ function saveSession() {
     }
 }
 
+function hydrateSessionFromStorage() {
+    const savedSession = localStorage.getItem('currentSession');
+    if (!savedSession) return;
+
+    try {
+        const session = JSON.parse(savedSession);
+        const roleBuckets = {
+            patient: userData.patients,
+            donor: userData.donors,
+            employee: userData.employees,
+            admin: userData.admins
+        };
+
+        const pool = roleBuckets[session.role] || [];
+        const matchedUser = pool.find(u => u.id === session.user?.id || u.phone === session.user?.phone);
+
+        if (matchedUser) {
+            currentUser = matchedUser;
+            currentRole = session.role;
+        } else {
+            clearSession();
+        }
+    } catch (e) {
+        clearSession();
+    }
+}
+
 function clearSession() {
     localStorage.removeItem('currentSession');
+    currentUser = null;
+    currentRole = null;
+    updateNavigationForRole();
 }
 
 function initializeSampleData() {
@@ -192,6 +213,27 @@ function backToLogin() {
     document.getElementById('register-form-section').style.display = 'none';
 }
 
+function updateHomeCta() {
+    const homeCta = document.getElementById('home-auth-cta');
+    const heroSubtitle = document.getElementById('hero-subtitle');
+
+    if (!homeCta) return;
+
+    if (currentRole && currentUser) {
+        homeCta.textContent = 'Go to Dashboard';
+        homeCta.onclick = () => showSection(getDashboardForRole(currentRole));
+        if (heroSubtitle) {
+            heroSubtitle.textContent = `Welcome back, ${currentUser.name}! Head to your dashboard to continue.`;
+        }
+    } else {
+        homeCta.textContent = 'Login / Register';
+        homeCta.onclick = () => showSection('login');
+        if (heroSubtitle) {
+            heroSubtitle.textContent = 'Quality Healthcare Services at Your Fingertips';
+        }
+    }
+}
+
 function updateNavigationForRole() {
     document.getElementById('patient-nav').style.display = 'none';
     document.getElementById('donor-nav').style.display = 'none';
@@ -224,6 +266,40 @@ function updateNavigationForRole() {
             homeCta.onclick = () => showSection('login');
         }
     }
+
+    updateHomeCta();
+    refreshAccessDenials();
+}
+
+function getDashboardForRole(role) {
+    const dash = {
+        'patient': 'patient-dashboard',
+        'donor': 'donor-dashboard',
+        'employee': 'employee-dashboard',
+        'admin': 'admin'
+    };
+    return dash[role] || 'home';
+}
+
+function refreshAccessDenials() {
+    const blocks = document.querySelectorAll('.access-denied');
+    blocks.forEach(block => {
+        const message = block.querySelector('p');
+        const button = block.querySelector('button');
+
+        if (!message || !button) return;
+
+        if (currentRole && currentUser) {
+            const roleName = currentRole.charAt(0).toUpperCase() + currentRole.slice(1);
+            message.textContent = `You are logged in as ${roleName} ${currentUser.name || ''}. Go straight to your dashboard.`.trim();
+            button.textContent = 'Go to Dashboard';
+            button.onclick = () => showSection(getDashboardForRole(currentRole));
+        } else {
+            message.textContent = 'Please login to continue.';
+            button.textContent = 'Go to Login';
+            button.onclick = () => showSection('login');
+        }
+    });
 }
 
 function getDashboardForRole(role) {
@@ -256,9 +332,6 @@ function checkAuthAndShow(sectionId) {
 function logout() {
     if (confirm('Are you sure?')) {
         clearSession();
-        currentUser = null;
-        currentRole = null;
-        updateNavigationForRole();
         showToast('Logged out');
         showSection('home');
     }
