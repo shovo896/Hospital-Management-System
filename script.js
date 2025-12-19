@@ -1537,6 +1537,16 @@ window.addEventListener('click', (e) => {
         e.target.classList.remove('active');
     }
 });
+
+// Expose functions used by inline HTML handlers to avoid scope issues.
+window.showSection = showSection;
+window.selectRole = selectRole;
+window.showRegisterForm = showRegisterForm;
+window.backToRoleSelection = backToRoleSelection;
+window.backToLogin = backToLogin;
+window.checkAuthAndShow = checkAuthAndShow;
+window.logout = logout;
+window.logoutAdmin = logoutAdmin;
 console.log('✅ Script loaded!');
 
 function loadAvailableTimeSlots() {
