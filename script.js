@@ -889,6 +889,20 @@ function renderAdminBloodPanels() {
     }
 }
 
+function resetDailyData() {
+    hospitalData.appointments = [];
+    hospitalData.diagnosticBookings = [];
+    hospitalData.wardAdmissions = [];
+    saveData();
+    showToast('Daily data reset');
+}
+
+function exportData() {
+    const payload = { hospitalData, userData };
+    console.log('Export data:', payload);
+    showToast('Data export printed to console');
+}
+
 function showAddDoctorForm() {
     const form = document.getElementById('add-doctor-form');
     if (form) {
