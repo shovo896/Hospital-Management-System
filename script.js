@@ -1626,3 +1626,15 @@ function loadAvailableTimeSlots() {
         info.style.color = '#991b1b';
     }
 }
+
+
+function openAppointmentModal(doctor) {
+    selectedDoctor = doctor;
+    const modal = document.getElementById('appointment-modal');
+    if (modal) {
+        modal.classList.add('active');
+    }
+    const title = document.getElementById('appointment-doctor-name');
+    if (title) title.textContent = doctor?.name || 'Selected Doctor';
+    loadAvailableTimeSlots();
+}
