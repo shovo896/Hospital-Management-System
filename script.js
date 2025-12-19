@@ -366,11 +366,7 @@ function saveSession() {
 
 
 
-    }
-
-
-
-}
+    }
 
 
 
