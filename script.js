@@ -964,40 +964,112 @@ function cancelAddDoctor() {
     if (form) form.style.display = 'none';
 }
 
-// ============================================
-// BOOKING FUNCTIONS
-// ============================================
+function renderAdminDoctors() {
+    const container = document.getElementById('doctors-list-admin');
+    if (!container) return;
 
-function openAppointmentModal(doctor) {
-    if (!currentUser) {
-        showToast('Please login!');
+    container.innerHTML = '';
+
+    if (!hospitalData.doctors.length) {
+        container.innerHTML = '<p style="color:#64748b;">No doctors added yet.</p>';
         return;
     }
-    selectedDoctor = doctor;
-    document.getElementById('selected-doctor-info').innerHTML = `<h3>${doctor.name}</h3><p>Fee: ৳${doctor.fee}</p>`;
-    
-    // Setup date change listener
-    // ekhan theke suru 
-    //  Date min set + reset slot (NO event listener here)
-const dateInput = document.getElementById('appointment-date');
-if (dateInput) {
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
-    dateInput.value = '';
+
+    hospitalData.doctors.forEach(doctor => {
+        const card = document.createElement('div');
+        card.className = 'data-card';
+        card.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+                <div>
+                    <h3 style="margin:0 0 6px 0;">${doctor.name}</h3>
+                    <p style="margin:0; color:#0f172a; font-weight:600;">${doctor.specialization}</p>
+                    <p style="margin:4px 0 0 0; color:#475569;">Fee: ৳${doctor.fee}</p>
+                </div>
+                <div style="text-align:right; color:#475569;">
+                    <p style="margin:0;">📞 ${doctor.phone}</p>
+                    <p style="margin:4px 0 0 0;">ID: ${doctor.id}</p>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
 }
 
-const slotSelect = document.getElementById('appointment-slot');
-if (slotSelect) {
-    slotSelect.innerHTML = '<option value="">Select Date First</option>';
+function renderDiagnosticQueues() {
+    const container = document.getElementById('diagnostic-queues');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (!hospitalData.diagnosticBookings.length) {
+        container.innerHTML = '<p style="color:#64748b;">No diagnostic bookings yet.</p>';
+        return;
+    }
+
+    hospitalData.diagnosticBookings.forEach(booking => {
+        const card = document.createElement('div');
+        card.className = 'data-card';
+        card.innerHTML = `
+            <h4 style="margin:0 0 6px 0;">${booking.type}</h4>
+            <p style="margin:0; color:#475569;">Patient: ${booking.patientName} (${booking.patientPhone})</p>
+            <p style="margin:4px 0 0 0; color:#475569;">Status: ${booking.status || 'pending'}</p>
+        `;
+        container.appendChild(card);
+    });
 }
 
-const slotsInfo = document.getElementById('slots-info');
-if (slotsInfo) {
-    slotsInfo.textContent = 'Select a date to see available slots';
+function renderWardRequests() {
+    const container = document.getElementById('ward-requests-admin');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (!hospitalData.wardAdmissions.length) {
+        container.innerHTML = '<p style="color:#64748b;">No ward admissions requested.</p>';
+        return;
+    }
+
+    hospitalData.wardAdmissions.forEach(request => {
+        const card = document.createElement('div');
+        card.className = 'data-card';
+        card.innerHTML = `
+            <h4 style="margin:0 0 6px 0;">${request.ward}</h4>
+            <p style="margin:0; color:#475569;">Patient: ${request.patientName}</p>
+            <p style="margin:4px 0 0 0; color:#475569;">Status: ${request.status || 'pending'}</p>
+        `;
+        container.appendChild(card);
+    });
 }
 
-    
-    document.getElementById('appointment-modal').classList.add('active');
+function renderNoticeBoard() {
+    const board = document.getElementById('notice-board');
+    if (!board) return;
+
+    if (!hospitalData.alerts.length) {
+        board.innerHTML = '<p class="muted">No notices right now.</p>';
+        return;
+    }
+
+    const sorted = [...hospitalData.alerts].sort((a, b) => new Date(b.time) - new Date(a.time));
+    board.innerHTML = '';
+
+    sorted.slice(0, 4).forEach(alert => {
+        const card = document.createElement('div');
+        card.className = `notice-card notice-${alert.type || 'info'}`;
+        const badge = alert.highlight || '🌸';
+        card.innerHTML = `
+            <div class="notice-header">
+                <span class="notice-icon">${badge}</span>
+                <div>
+                    <p class="notice-title">${alert.title}</p>
+                    <p class="notice-time">${formatDateTime(alert.time)}</p>
+                </div>
+            </div>
+            <p class="notice-message">${alert.message}</p>
+            ${alert.image ? `<img class="notice-photo" src="${alert.image}" alt="notice image">` : ''}
+        `;
+        board.appendChild(card);
+    });
 }
 
 function bookDiagnostic(type) {
