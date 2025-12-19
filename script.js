@@ -49,6 +49,7 @@ function saveData() {
 }
 
 function loadData() {
+    // Load saved state or seed with sample data if nothing exists.
     const saved = localStorage.getItem('hospitalData');
     if (saved) {
         try {
