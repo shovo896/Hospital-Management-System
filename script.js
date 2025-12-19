@@ -1274,6 +1274,20 @@ function refreshAccessDenials() {
 
 
 
+function setAvatar(container, fallbackEl, photo, name) {
+    if (!container || !fallbackEl) return;
+
+    if (photo) {
+        container.style.backgroundImage = `url(${photo})`;
+        fallbackEl.style.display = 'none';
+    } else {
+        container.style.backgroundImage = 'none';
+        fallbackEl.style.display = 'flex';
+        fallbackEl.textContent = (name?.charAt(0) || '?').toUpperCase();
+    }
+}
+
+
 function getDashboardForRole(role) {
 
 
@@ -5214,45 +5228,84 @@ function setupEventListeners() {
 
 
 
-            console.log('Phone:', phone);
-
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-password-confirm').value;
-
-            if (!password) {
-                showToast('Please enter a password.');
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showToast('Passwords do not match.');
-                return;
-            }
-
-            const newUser = {
-
-                id: selectedRoleForAuth.charAt(0).toUpperCase() + Date.now(),
-
-                name: document.getElementById('register-name').value,
-
-                photo: '',
-
-                phone: phone,
-
-                age: document.getElementById('register-age').value,
-
-                bloodGroup: document.getElementById('register-blood').value,
-
-                registrationDate: new Date().toISOString(),
-
-                medicalHistory: []
-
-            };
-
-
-
-
-
+            console.log('Phone:', phone);
+
+
+
+            const password = document.getElementById('register-password').value;
+
+            const confirmPassword = document.getElementById('register-password-confirm').value;
+
+
+
+            if (!password) {
+
+                showToast('Please enter a password.');
+
+                return;
+
+            }
+
+
+
+            if (password !== confirmPassword) {
+
+                showToast('Passwords do not match.');
+
+                return;
+
+            }
+
+
+
+            const newUser = {
+
+
+
+                id: selectedRoleForAuth.charAt(0).toUpperCase() + Date.now(),
+
+
+
+                name: document.getElementById('register-name').value,
+
+
+
+                photo: '',
+
+
+
+                phone: phone,
+
+
+
+                age: document.getElementById('register-age').value,
+
+
+
+                bloodGroup: document.getElementById('register-blood').value,
+
+
+
+                registrationDate: new Date().toISOString(),
+
+
+
+                medicalHistory: []
+
+
+
+            };
+
+
+
+
+
+
+
+
+
+
+
 console.log('New user data:', newUser);
             newUser.password = password;
 
