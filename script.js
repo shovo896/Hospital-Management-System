@@ -3146,11 +3146,10 @@ function toggleProfileEdit() {
 
         document.getElementById('edit-name').value = currentUser.name;
 
-
-
-        document.getElementById('edit-photo').value = currentUser.photo || '';
-
-
+        const photoInput = document.getElementById('edit-photo');
+        if (photoInput) {
+            photoInput.value = '';
+        }
 
         document.getElementById('edit-phone').value = currentUser.phone;
 
