@@ -165,8 +165,12 @@ function selectRole(role) {
     const passwordField = document.getElementById('password-field');
     const loginPassword = document.getElementById('login-password');
     
-    passwordField.style.display = 'block';
-    loginPassword.required = false;
+    const needsPassword = role === 'admin' || role === 'employee';
+    passwordField.style.display = needsPassword ? 'block' : 'none';
+    loginPassword.required = needsPassword;
+    if (!needsPassword) {
+        loginPassword.value = '';
+    }
     
     const registerLink = document.getElementById('register-link');
     if (role === 'admin') {
@@ -195,16 +199,13 @@ function showRegisterForm() {
     
     const employeeIdField = document.getElementById('employee-id-field');
     const departmentField = document.getElementById('department-field');
-    const passwordRegisterField = document.getElementById('password-register-field');
     
     if (selectedRoleForAuth === 'employee') {
         employeeIdField.style.display = 'block';
         departmentField.style.display = 'block';
-        passwordRegisterField.style.display = 'block';
     } else {
         employeeIdField.style.display = 'none';
         departmentField.style.display = 'none';
-        passwordRegisterField.style.display = 'none';
     }
 }
 
